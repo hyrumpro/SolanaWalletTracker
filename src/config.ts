@@ -37,7 +37,7 @@ export const config = {
     },
     {
       name: "DigBen",
-      address: "CKddnqDi9hTPDr3ovyLfseJ17ddr553u1MXKV9VpGiJ9",
+      address: "UUAhspPgUdGuXUnokmxERH1VvNGNh1ouN3mfcbfV8yd",
       emoji: "🚀",
       tags: [],
     },

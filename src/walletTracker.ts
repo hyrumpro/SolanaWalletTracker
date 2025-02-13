@@ -11,7 +11,7 @@ import { checkMultipleOwnersForMint } from "./db";
 
 export async function getWalletTokenHoldings(walletAddress: string): Promise<GetWalletTokenHoldingsResponse> {
   try {
-    const txUrl = process.env.HELIUS_HTTPS_URI || "";
+    const txUrl = process.env.CHAINSTACK_API || "";
 
     // Use getTokenAccounts via DAS api to get the current spl-tokens (Alternativly use getTokenAccountsByOwner method)
     const res = await axios.post<any>(txUrl, {
