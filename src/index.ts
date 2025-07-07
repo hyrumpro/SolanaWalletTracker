@@ -90,7 +90,9 @@ async function fetchHoldings(walletToSync?: string): Promise<void> {
     let wallets = SUBSCRIBE_WALLETS;
     if (walletToSync) {
       const filteredWallet = wallets.filter((w) => w.address === walletToSync);
-      if (filteredWallet) wallets = filteredWallet;
+      if (filteredWallet.length > 0) {
+        wallets = filteredWallet;
+      }
     }
 
     for (const wallet of wallets) {
