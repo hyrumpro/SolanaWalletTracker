@@ -25,13 +25,13 @@ export interface GetWalletTokenHoldingsResponse {
   success: boolean;
   msg: string;
 }
-export interface SplTokenStoreReponse {
+export interface SplTokenStoreResponse {
   success: boolean;
   added: SplTokenHolding[];
   removed: string[];
   msg: string;
 }
-export interface getAccountInfoStreamReponse {
+export interface getAccountInfoStreamResponse {
   jsonrpc: string;
   method: "accountNotification";
   params: {
@@ -63,7 +63,7 @@ export interface getAccountInfoStreamReponse {
     subscription: number;
   };
 }
-export interface getAccountInfoStreamReponseWithConfirmation extends getAccountInfoStreamReponse {
+export interface getAccountInfoStreamResponseWithConfirmation extends getAccountInfoStreamResponse {
   id?: string; // Confirmation ID
   result?: null; // Confirmation result
 }

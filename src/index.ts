@@ -3,11 +3,11 @@ import WebSocket from "ws"; // Node.js websocket library
 import * as dotenv from "dotenv";
 import { getDoubleHoldings, getWalletTokenHoldings } from "./walletTracker";
 import {
-  getAccountInfoStreamReponseWithConfirmation,
+  getAccountInfoStreamResponseWithConfirmation,
   GetWalletTokenHoldingsResponse,
   MintWithOwnersResponse,
   SplTokenHolding,
-  SplTokenStoreReponse,
+  SplTokenStoreResponse,
 } from "./types";
 import { config } from "./config";
 import { clearHoldingsTable, updateHoldings } from "./db";
@@ -129,7 +129,7 @@ async function fetchHoldings(walletToSync?: string): Promise<void> {
       // Wallet1 🀄️ (KEN7...WdYT) holds 265 SPL-Tokens
 
       // Store holdings in local database
-      const stored: SplTokenStoreReponse = await updateHoldings(tokenHoldingsData, publicKey.toString());
+      const stored: SplTokenStoreResponse = await updateHoldings(tokenHoldingsData, publicKey.toString());
       if (!stored.success) {
         saveLogTo(actionsLogs, `⛔ Error while storing transfers for wallet ${walletName}. Reason: ${stored.msg}`);
         continue;
@@ -268,7 +268,7 @@ async function accountSubscribeStream(): Promise<void> {
   ws.on("message", async (data: WebSocket.Data) => {
     try {
       const jsonString = data.toString();
-      const accountInfo: getAccountInfoStreamReponseWithConfirmation = JSON.parse(jsonString);
+      const accountInfo: getAccountInfoStreamResponseWithConfirmation = JSON.parse(jsonString);
 
       // Handle subscription confirmation
       if (
