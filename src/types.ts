@@ -80,3 +80,21 @@ export interface MintWithOwnersResponse {
   duplicates: MintWithOwners[];
   msg: string;
 }
+
+export interface WalletBalanceResponse {
+  success: boolean;
+  lamports: number;
+  msg: string;
+}
+
+export interface TransactionInfo {
+  signature: string;
+  slot: number;
+  blockTime: number | null;
+}
+
+export interface WalletTransactionsResponse {
+  success: boolean;
+  transactions: TransactionInfo[];
+  msg: string;
+}

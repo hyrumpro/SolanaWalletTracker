@@ -1,7 +1,11 @@
 import { PublicKey } from "@solana/web3.js";
 import WebSocket from "ws"; // Node.js websocket library
 import * as dotenv from "dotenv";
-import { getDoubleHoldings, getWalletTokenHoldings } from "./walletTracker";
+import {
+  getDoubleHoldings,
+  getWalletTokenHoldings,
+  getWalletBalance,
+} from "./walletTracker";
 import {
   getAccountInfoStreamReponseWithConfirmation,
   GetWalletTokenHoldingsResponse,
@@ -31,8 +35,10 @@ function shortenAddress(address: string): string {
 
 // Create Action and holdings Log constant
 const actionsLogs: string[] = [];
-let duplicateLogs: string[] = [];
+const duplicateLogs: string[] = [];
 const holdingLogs = new Map<string, string>();
+const lastFetch = new Map<string, number>();
+const fetchInterval = config.settings.fetch_interval_ms || 15000;
 function showLogs() {
   console.log("\n".repeat(100));
   console.clear();
@@ -79,7 +85,7 @@ function showLogs() {
 
 // Main to fetch token holdings for provided wallets
 let firstRun = true;
-async function fetchHoldings(walletToSync?: string): Promise<void> {
+async function fetchHoldings(walletToSync?: string, force = false): Promise<void> {
   try {
     // Empty Database
     if (firstRun) {
@@ -97,6 +103,12 @@ async function fetchHoldings(walletToSync?: string): Promise<void> {
       const walletAddress = wallet.address;
       const walletName = wallet.name;
       const walletEmoji = wallet.emoji;
+
+      const last = lastFetch.get(walletAddress) || 0;
+      if (!force && Date.now() - last < fetchInterval) {
+        continue;
+      }
+      lastFetch.set(walletAddress, Date.now());
 
       // Verify if this is a valid walletAddress
       let publicKey;
@@ -121,7 +133,12 @@ async function fetchHoldings(walletToSync?: string): Promise<void> {
 
       // Output the wallets that we are tracking
       const inspectText = `\x1b]8;;${config.settings.inspect_url_wallet}${walletAddress}\x1b\\${shortenAddress(walletAddress)}\x1b]8;;\x1b\\`;
-      holdingLogs.set(walletAddress, `${wallet.name} ${walletEmoji} (${inspectText}) holds ${tokenHoldingsData.length} SPL-Tokens`);
+      const balanceRes = await getWalletBalance(publicKey.toString());
+      const balance = balanceRes.success ? balanceRes.lamports / 1e9 : 0;
+      holdingLogs.set(
+        walletAddress,
+        `${wallet.name} ${walletEmoji} (${inspectText}) holds ${tokenHoldingsData.length} SPL-Tokens | ${balance.toFixed(2)} SOL`
+      );
 
       // 💼 Tracked Wallets overview
       // ================================================================================
@@ -318,7 +335,7 @@ async function accountSubscribeStream(): Promise<void> {
   });
 }
 
-fetchHoldings()
+fetchHoldings(undefined, true)
   .then(accountSubscribeStream)
   .catch((err) => {
     console.error("Initialization error:", err.message);
