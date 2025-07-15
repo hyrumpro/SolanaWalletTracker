@@ -1,7 +1,7 @@
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import { config } from "./config";
-import { DuplicateOwnerMintRecord, SplTokenHolding, SplTokenStoreReponse } from "./types";
+import { DuplicateOwnerMintRecord, SplTokenHolding, SplTokenStoreResponse } from "./types";
 
 // Holdings
 export async function createHoldingsTable(database: any): Promise<boolean> {
@@ -23,7 +23,7 @@ export async function createHoldingsTable(database: any): Promise<boolean> {
     return false;
   }
 }
-export async function updateHoldings(holdings: SplTokenHolding[], walletAddress: string): Promise<SplTokenStoreReponse> {
+export async function updateHoldings(holdings: SplTokenHolding[], walletAddress: string): Promise<SplTokenStoreResponse> {
   try {
     const db = await open({
       filename: config.db.db_name_tracker_transfers,
@@ -74,7 +74,7 @@ export async function updateHoldings(holdings: SplTokenHolding[], walletAddress:
     await db.close();
 
     // Return data
-    const returnData: SplTokenStoreReponse = {
+    const returnData: SplTokenStoreResponse = {
       added: addedTokens,
       removed: removedTokens,
       msg: "success",
@@ -84,7 +84,7 @@ export async function updateHoldings(holdings: SplTokenHolding[], walletAddress:
     return returnData;
   } catch (error: any) {
     // Return data
-    const returnData: SplTokenStoreReponse = {
+    const returnData: SplTokenStoreResponse = {
       added: [],
       removed: [],
       msg: "Error: " + error.message,
