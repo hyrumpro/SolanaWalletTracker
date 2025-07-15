@@ -6,8 +6,61 @@ import {
   MintWithOwners,
   MintWithOwnersResponse,
   SplTokenHolding,
+  WalletBalanceResponse,
+  WalletTransactionsResponse,
+  TransactionInfo,
 } from "./types";
 import { checkMultipleOwnersForMint } from "./db";
+
+export async function getWalletBalance(walletAddress: string): Promise<WalletBalanceResponse> {
+  try {
+    const txUrl = process.env.CHAINSTACK_API || "";
+
+    const res = await axios.post(txUrl, {
+      jsonrpc: "2.0",
+      id: 1,
+      method: "getBalance",
+      params: [walletAddress],
+    });
+
+    if (!res.data) {
+      throw new Error("No balance received");
+    }
+
+    const lamports: number = res.data.result.value;
+
+    return { success: true, lamports, msg: "success" };
+  } catch (error: any) {
+    return { success: false, lamports: 0, msg: error.message };
+  }
+}
+
+export async function getWalletTransactions(walletAddress: string, limit = 20): Promise<WalletTransactionsResponse> {
+  try {
+    const txUrl = process.env.CHAINSTACK_API || "";
+
+    const res = await axios.post(txUrl, {
+      jsonrpc: "2.0",
+      id: 1,
+      method: "getSignaturesForAddress",
+      params: [walletAddress, { limit }],
+    });
+
+    if (!res.data) {
+      throw new Error("No transactions received");
+    }
+
+    const transactions: TransactionInfo[] = res.data.result.map((t: any) => ({
+      signature: t.signature,
+      slot: t.slot,
+      blockTime: t.blockTime ?? null,
+    }));
+
+    return { success: true, transactions, msg: "success" };
+  } catch (error: any) {
+    return { success: false, transactions: [], msg: error.message };
+  }
+}
 
 export async function getWalletTokenHoldings(walletAddress: string): Promise<GetWalletTokenHoldingsResponse> {
   try {

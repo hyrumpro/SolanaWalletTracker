@@ -6,6 +6,7 @@ export const config = {
     inspect_url_wallet: "https://gmgn.ai/sol/address/",
     show_max_duplicates: 5,
     show_duplicate_min_holders: 3, // Minimum wallets that need to hold the token before showing it as duplicate
+    fetch_interval_ms: 15000, // Minimum interval between API calls per wallet
   },
   db: {
     db_name_tracker_transfers: "src/db/holdings.db", // Sqlite Database location

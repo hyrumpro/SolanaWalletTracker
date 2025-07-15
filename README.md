@@ -8,6 +8,8 @@ This solana wallet tracker is a TypeScript bot designed to track wallets in real
 - Track duplicate holdings
 - See when wallets buy and sell
 - See the amount of tokens hold by a wallet
+- Check SOL balance for each tracked wallet
+- Fetch recent transactions for a wallet
 
 ### Third Party documentation
 
